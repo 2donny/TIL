@@ -6,8 +6,6 @@
 
 [AWS RDS로 관계형 데이터베이스 확장 ](./RDS/rds.md)
 
-[AWS EC2 Nginx 설정 ](./Nginx/nginx.md)
-
 [AWS VPC 설정 ](./VPC/vpc.md)
 
 [AWS Route53으로 도메인 설정](./Route53/01.장점.md)
