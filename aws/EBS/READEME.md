@@ -50,6 +50,7 @@ VPC 설정하기 전에 Security group 설정을 통해 inbound, outbound 규칙
 4. '보안 그룹 생성'을 누르고 '인바운드 규칙'을 다음과 같이 추가해준다.
    1. DB 타입이 postgres 이므로 default port인 5432로 설정하고 TCP 프로토콜을 선택한다.
 <img src="./static/inbound.png"/>
+
 5. 콘솔에서 RDS에 들어가서 아까 생성한 RDS 인스턴스의 `편집하기`를 누른다.
 6. ```보안 그룹 설정```에서 VPC에서 생성한 4번에서 생성한 보안그룹을 선택한다.
 7. 이제 RDS가 끝났으니 EB 인스턴스에 대한 보안그룹 설정을 한다

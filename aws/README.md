@@ -11,3 +11,7 @@
 [AWS Route53으로 도메인 설정](./Route53/01.장점.md)
 
 [AWS ACM으로 SSL 설정](./ACM/01.Amazon_Certificate_Manager.md)
+
+[AWS Elastic bean stalk](./EBS/READEME.md)
+
+[AWS EC2](./EC2/ec2.md)
