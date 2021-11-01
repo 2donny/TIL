@@ -179,12 +179,16 @@ Dockerrun.aws.json
 - links : 연결한 컨테이너의 목록. 연결된 컨테이너끼리는 통신이 가능
   - ex) links: ['frontend', 'backend']
 
-## EBS 생성
+## EBS, RDS 생성 및 VPC 내에서의 연결
 
-이제는 EBS 환경을 생성해줘야하는데 [AWS EB, RDS 인스턴스 연결하기](../aws/EBS/READEME.md) 절차를 모두 따른 후에 다시 와보자.
+이제는 EBS 환경을 생성해줘야하는데 [AWS EB, RDS 인스턴스 생성 및 연결하기](../aws/EBS/READEME.md) 절차를 모두 따른 후에 다시 와보자.
 
 ## Travis CI에서 Deploy
-이제는 Travis.yml에서 deploy 설정을 해준다.
+
+현재까지 한 것은 각각의 이미지들을 빌드한 후 도커허브에 넣어주었습니다.
+이제 해야할 일은 AWS으로의 배포를 위해 travis.yml에서 배포관련 설정을 해주어야합니다.
+
+Travis.yml에서 deploy 설정을 해줌으로써 허브로 푸쉬한 이미지를 AWS bean stalk으로 배포할 수 있도록 한다.
 
 ```yml
    ...
@@ -210,9 +214,10 @@ Dockerrun.aws.json
 - on은 어떤 브랜치가 push될 때 deploy할 것인가를 결정한다.
 
 ## Travis CI에서 Deploy API KEY
+
 <img src="./auth.png"/>
 
-> 현재까지는 Travis CI에서 AWS에 어떤 파일(도커 이미지)을 전해줄것이며, AWS에서 어떤 서비스(EBS)를 이용할 것인지와 같은 설정만 정의했다. 하지만 Travis CI가 AWS와 실직적으로 소통을 할 수 있도록 인증하는 부분을 설정하지는 않았다. 
+> 현재까지는 Travis CI에서 AWS에 어떤 파일(도커 이미지)을 전해줄것이며, AWS에서 어떤 서비스(EBS)를 이용할 것인지와 같은 설정만 정의했다. 하지만 Travis CI가 AWS와 실직적으로 소통을 할 수 있도록 인증하는 부분을 설정하지는 않았다.
 
 그러므로 Travis가 AWS에 접근할 수 있도록 인증을 해야하는데, AWS에서 제공하는 API Key를 Travis.yml에 넣어줌으로써 인증이 가능하다.
 
@@ -225,7 +230,7 @@ Dockerrun.aws.json
    2. 기존 정책에 연결 선택
    3. 정책 -> AdministratorAccess-AWSElasticBeanstalk 선택
    4. access_key, secret_access_key를 저장한다.
-2. Travis CI에 settings에 가서 Environment Variables에 ```AWS_ACCES_KEY```, ```AWS_SECRET_ACCESS_KEY로``` 추가한다.
+2. Travis CI에 settings에 가서 Environment Variables에 `AWS_ACCES_KEY`, `AWS_SECRET_ACCESS_KEY로` 추가한다.
 3. 아래와 같이 travis.yml에 추가해주면 끝난다.
 
 ```yml
