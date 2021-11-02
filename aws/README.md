@@ -2,6 +2,8 @@
 
 ## 내가 보려고 정리한 것들
 
+[AWS ECS ](./ECS/README.md)
+
 [AWS Lambda로 썸네일 생성 ](./Lambda/썸네일_생성.md)
 
 [AWS RDS로 관계형 데이터베이스 확장 ](./RDS/rds.md)
