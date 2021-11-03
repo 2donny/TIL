@@ -1,16 +1,32 @@
-## ECS (Elastic container service)
+# ECS (Elastic container service)
 
-### [What is Amazon Elastic Container Service](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html)
+## [What is Amazon Elastic Container Service](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html)
 
 - ECS is a highly scalable, fast container management service that makes it easy to run, stop, and manage containers on a cluster
 - 특정 리전 내 가용 영역에서 컨테이너를 실행하는 과정을 간소화하는 리전 서비스이다.
-- `컨테이너들`은 service 내에 task definition에서 정의된다.
-- service는
-  - task들을 동시에 실행하고, 유지보수할 수 있게 해주는 설정이다.
-  - 지속적으로 실행돼야하는 컨테이너(웹 서버)를 서비스에서 생성한다.
-- Task definition은 작업을 실행하거나, 서비스를 만드는데 사용된다.
-- 도커 이미지는 DockerFile 파일을 통해 빌드되고, 빌드된 이미지를 ECR나 Docker hub에 푸쉬한다.
-- Task definition을 생성할 때 메모리, 네트워크, 프로토콜을 설정해주고, 앞에서 푸쉬한 ECR에서의 이미지 uri를 선택할 수 있다.
+
+<br />
+
+## 용어
+
+### Service
+
+- service는 task들을 concurrent하게 실행시키고, 유지보수할 수 있게 해주는 설정이다.
+- 지속적으로 실행돼야하는 컨테이너(웹 서버)를 서비스에서 생성한다.
+
+### Task definition
+
+- Task definition은 Task을 실행하거나, 서비스를 만드는데 사용된다.
+- `Container`는 service 내에 task definition에서 정의된다.
+- 생성만한다고 Cluster 내에 서비스가 실행하지 않는다. Task 실행을 해줘야한다.
+
+<br />
+
+## ECR (Elastic container repository)
+
+- docker image가 저장되는 repository이다.
+- docker image는 DockerFile 파일을 통해 build되고, build된 image를 ECR나 Docker hub에 푸쉬한다.
+- Task definition을 생성할 때 memory, network, protocol 설정해주고, 앞에서 push한 ECR에서의 image uri를 선택해서 생성한다.
 - 그리고 서비스 내에 몇개의 concurrent한 task를 실행할지도 결정한다.
 
 ECS가 각광받는 이유중 Fargate를 들 수 있다. 장점은 다음과 같다.
@@ -27,11 +43,13 @@ ECS가 각광받는 이유중 Fargate를 들 수 있다. 장점은 다음과 같
 - 이처럼 과금을 크게 줄인다.
   - 기존 서버에서는 EC2가 올라가있기 때문에 EC2에 대한 비용을 지불해야했었다면, Fargate를 통해서 container를 띄우는 비용만 지불하면 된다.
 
-## 마이크로 서비스로 배포 Flow
+<br />
+
+# Microservice 배포 Flow
 
 > [공식문서](https://aws.amazon.com/ko/getting-started/hands-on/break-monolith-app-microservices-ecs-docker-ec2/)를 참조하였다.
 
-### ECR repository에 도커 이미지 푸쉬하기
+## Monolithic 컨테이너화
 
 1. 가장 먼저 [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-mac.html#cliv2-mac-prereq)를 install하자
    1. 처음 AWS CLi를 인스톨하는 거라면 aws configure도 해야하는데 IAM 사용자를 하나 만들자.
@@ -57,11 +75,32 @@ app.listen(80, () => {
 
 3. 레포지토리 생성
    1. AWS [ECR 콘솔](https://ap-northeast-2.console.aws.amazon.com/ecr/repositories?region=ap-northeast-2)로 가서 레포지토리 생성 클릭
-   2.
 4. Docker 이미지 빌드 및 푸쉬
-   1. 이미지 빌드 ```docker build -t nestjs-demo . ```
-   2. 빌드된 이미지와 ECR 레포지토리를 매핑 ```docker tag nestjs-demo:latest 471011865482.dkr.ecr.ap-northeast-2.amazonaws.com/nestjs-demo:latest```
-   3. AWS ECR 레포지토리로 푸쉬 ```docker push 471011865482.dkr.ecr.ap-northeast-2.amazonaws.com/nestjs-demo:latest```
+   1. 이미지 빌드 `docker build -t nestjs-demo . `
+   2. 빌드된 이미지와 ECR 레포지토리를 매핑 `docker tag nestjs-demo:latest 471011865482.dkr.ecr.ap-northeast-2.amazonaws.com/nestjs-demo:latest`
+   3. AWS ECR 레포지토리로 푸쉬 `docker push 471011865482.dkr.ecr.ap-northeast-2.amazonaws.com/nestjs-demo:latest`
 
+<br />
 
-### ECS 클러스터 생성하기
+## Monolithic을 Microservice 분할
+
+ECS를 사용하여 EC2 컴퓨팅 인스턴스의 관리형 클러스터를 인스턴스화하고 클러스터에서 실행되는 컨테이너로서 이미지를 배포합니다
+
+아키텍쳐 구성
+<img src="./images/architecture.png"/>
+
+- Client
+
+  - 클라이언트가 포트 80을 통해 로드 밸런서로 요청을 보냅니다.
+
+- Load balancer
+
+  - ALB는 외부 트래픽을 해당 서비스로 라우팅합니다. ALB는 클라이언트 요청을 검사하여 라우팅 규칙에 따라 해당 요청을 규칙에 부합하는 인스턴스 및 포트로 경로 설정합니다
+
+- Target group
+
+  - 각 서비스는 해당 서비스에 실행되는 각 컨테이너의 인스턴스 및 포트를 추적할 수 있는 대상 그룹이 있습니다
+
+- Micro service
+
+  - Amazon ECS는 각 서비스를 EC2 클러스터 전체의 컨테이너로 배포합니다. 각 컨테이너는 단일 기능만 처리합니다
