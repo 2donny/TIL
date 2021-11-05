@@ -93,11 +93,19 @@ app.listen(80, () => {
 
 ### 배포 Flow
 
-1. Cluster 생성 (Fargate 선택)
-2. Task definition 생성
-   1. 컨테이너 추가에서 앞에서 푸쉬한 image url을 넣는다. 
-   2. 웹 서버의 경우 포트 매핑도 해준다.
+우리는 앞에서 ECR repository에 image를 push 해줬다.
+이제는 이 image를 ECS 서비스 내에서 배포를 할 차례이다.
 
+1. Cluster를 생성한다. (Fargate 선택)
+2. Task definition 생성
+   1. `Container 추가` 에서 앞에서 push한 image url을 넣는다.
+   2. 웹 서버의 경우 포트 매핑도 해준다.
+3. Service를 생성한다.
+   1. 시작 유형은 ```fargate```를 선택한다.
+   2. `작업 정의`는 위 2번에서 생성한 task definition을 선택한다.
+   3. `작업 개수`는 실행될 컨테이너의 수를 의미한다.
+   4. ```로드 밸런서```를 선택해야하는데 이 옵션을 사용하려면 미리 생성해야한다. ECS fargate 서비스 생성을 위한 Load balancer, target group 생성은 [이 문서](https://aws.amazon.com/ko/premiumsupport/knowledge-center/create-alb-auto-register/)를 참고해보자
+4. 
 
 <br />
 
