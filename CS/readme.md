@@ -1,7 +1,7 @@
 # Computer Science
 
-[DB](./DB.md) 정리
+[DB 정리](./DB.md) 
 
-[OS](./OS.md) 정리 
+[OS 정리](./OS.md) 
 
-[Network](./Network.md) 정리
+[Network 정리](./Network.md) 
